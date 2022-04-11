@@ -7,7 +7,7 @@ class TitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'Todos App',
-      style: TextStyle(color: Colors.red, fontSize: 30),
+      style: TextStyle(color: Colors.red, fontSize: 50),
       textAlign: TextAlign.center,
     );
   }
