@@ -13,29 +13,35 @@ class TodoApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var allTodos = ref.watch(todoListProvider);
+    var allTodos = ref.watch(filteredTodoList);
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         children: [
-          TitleWidget(),
+          const TitleWidget(),
           TextField(
             onSubmitted: (todo) {
               ref.read(todoListProvider.notifier).addTodo(todo);
             },
             controller: newTodoController,
-            decoration: InputDecoration(labelText: 'Bugün Neler Yapacaksın?'),
+            decoration:
+                const InputDecoration(labelText: 'Bugün Neler Yapacaksın?'),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ToolBarWidget(),
-          SizedBox(height: 20),
+          allTodos.length == 0
+              ? const Center(child: Text('Herhangi Bir Görev yok!'))
+              : const SizedBox(),
+          const SizedBox(height: 20),
           for (var i = 0; i < allTodos.length; i++)
             Dismissible(
                 key: ValueKey(allTodos[i].id),
                 onDismissed: (_) {
                   ref.read(todoListProvider.notifier).remove(allTodos[i]);
                 },
-                child: TodoListItemWidget(item: allTodos[i])),
+                child: ProviderScope(overrides: [
+                  currentTodoProvider.overrideWithValue(allTodos[i])
+                ], child: TodoListItemWidget())),
         ],
       ),
     );

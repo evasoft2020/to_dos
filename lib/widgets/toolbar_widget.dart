@@ -3,12 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:to_do/providers/all_providers.dart';
 
 class ToolBarWidget extends ConsumerWidget {
-  const ToolBarWidget({Key? key}) : super(key: key);
+  ToolBarWidget({Key? key}) : super(key: key);
+  var _currentFilter = TodoListFilter.all;
+
+  Color changeTextColor(TodoListFilter filter) {
+    return _currentFilter == filter ? Colors.green : Colors.orange;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var onComplatedTodoCount =
-        ref.watch(todoListProvider).where((todo) => !todo.completed).length;
+    final onComplatedTodoCount = ref.watch(unCompletedTodoCount);
+    _currentFilter = ref.watch(todoListFilter);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -23,21 +28,35 @@ class ToolBarWidget extends ConsumerWidget {
         Tooltip(
           message: 'All Todos',
           child: TextButton(
-            onPressed: () {},
+            style: TextButton.styleFrom(
+                primary: changeTextColor(TodoListFilter.all)),
+            onPressed: () {
+              ref.read(todoListFilter.notifier).state = TodoListFilter.all;
+              ;
+            },
             child: Text('All'),
           ),
         ),
         Tooltip(
           message: 'Active Todos',
           child: TextButton(
-            onPressed: () {},
+            style: TextButton.styleFrom(
+                primary: changeTextColor(TodoListFilter.active)),
+            onPressed: () {
+              ref.read(todoListFilter.notifier).state = TodoListFilter.active;
+            },
             child: Text('Active'),
           ),
         ),
         Tooltip(
           message: 'Completed Todos',
           child: TextButton(
-            onPressed: () {},
+            style: TextButton.styleFrom(
+                primary: changeTextColor(TodoListFilter.completed)),
+            onPressed: () {
+              ref.read(todoListFilter.notifier).state =
+                  TodoListFilter.completed;
+            },
             child: Text('Completed'),
           ),
         )
